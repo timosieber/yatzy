@@ -16,7 +16,7 @@ const STANDARD_LOWER = [
   { key: 'smallStraight', label: 'Kleine Straße', type: 'smallStraight', fixed: 30, input: 'fixed' },
   { key: 'largeStraight', label: 'Große Straße', type: 'largeStraight', fixed: 40, input: 'fixed' },
   { key: 'yatzy', label: 'Yatzy', type: 'yatzy', fixed: 50, step: 50, input: 'repeat' },
-  { key: 'chance', label: 'Chance', type: 'chance', input: 'calculated' },
+  { key: 'chance', label: 'Chance', type: 'chance', input: 'manual' },
 ]
 
 const MAXI_LOWER = [
@@ -32,7 +32,7 @@ const MAXI_LOWER = [
   { key: 'smallStraight', label: 'Kleine Straße', type: 'smallStraight', fixed: 30, input: 'fixed' },
   { key: 'largeStraight', label: 'Große Straße', type: 'largeStraight', fixed: 40, input: 'fixed' },
   { key: 'yatzy', label: 'Yatzy', type: 'yatzy', fixed: 50, step: 50, input: 'repeat' },
-  { key: 'chance', label: 'Chance', type: 'chance', input: 'calculated' },
+  { key: 'chance', label: 'Chance', type: 'chance', input: 'manual' },
 ]
 
 const MODE_TEMPLATES = {

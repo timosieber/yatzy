@@ -85,6 +85,19 @@ describe('complete gameplay', () => {
     expect(screen.getByRole('button', { name: /mara.*1 paar korrigieren/i })).toHaveTextContent('137')
   })
 
+  it('accepts an arbitrary whole-number score for chance', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+    await user.click(screen.getByRole('button', { name: /spiel starten/i }))
+    await user.click(screen.getByRole('button', { name: /mara.*chance eintragen/i }))
+
+    expect(screen.getByRole('spinbutton', { name: /punkte für chance/i })).toBeInTheDocument()
+    await user.type(screen.getByRole('spinbutton', { name: /punkte für chance/i }), '137')
+    await user.click(screen.getByRole('button', { name: /^eintragen$/i }))
+
+    expect(screen.getByRole('button', { name: /mara.*chance korrigieren/i })).toHaveTextContent('137')
+  })
+
   it('adds and corrects multiple Yatzys in 50-point steps', async () => {
     const user = userEvent.setup()
     render(<App />)

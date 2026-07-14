@@ -41,6 +41,7 @@ Weitere Variablen sind nicht erforderlich. Optional kann `PGSSLMODE=require` ges
 Für alle Spielmodi gelten außerdem diese Hausregeln:
 
 - **1 Paar, 2 Paare, 3 Gleiche und 4 Gleiche:** beliebige nichtnegative ganze Punktzahl.
+- **Chance:** beliebige nichtnegative ganze Punktzahl.
 - **Full House:** fest 25 Punkte.
 - **Kleine Straße:** fest 30 Punkte.
 - **Große Straße:** fest 40 Punkte.
