@@ -73,4 +73,34 @@ describe('complete gameplay', () => {
     expect(screen.getByRole('button', { name: /spiel starten/i })).toBeDisabled()
     expect(screen.getByLabelText(/würfelanzahl/i)).toHaveValue('7')
   })
+
+  it('accepts an arbitrary whole-number score for a pair', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+    await user.click(screen.getByRole('button', { name: /spiel starten/i }))
+    await user.click(screen.getByRole('button', { name: /mara.*1 paar eintragen/i }))
+    await user.type(screen.getByRole('spinbutton', { name: /punkte für 1 paar/i }), '137')
+    await user.click(screen.getByRole('button', { name: /^eintragen$/i }))
+
+    expect(screen.getByRole('button', { name: /mara.*1 paar korrigieren/i })).toHaveTextContent('137')
+  })
+
+  it('adds and corrects multiple Yatzys in 50-point steps', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+    await user.click(screen.getByRole('button', { name: /spiel starten/i }))
+    await user.click(screen.getByRole('button', { name: /mara.*yatzy eintragen/i }))
+    await user.click(screen.getByRole('button', { name: /50 punkte hinzufügen/i }))
+    await user.click(screen.getByRole('button', { name: /50 punkte hinzufügen/i }))
+    expect(screen.getByText('100', { selector: '.repeat-score-value' })).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: /^eintragen$/i }))
+
+    expect(screen.getByRole('button', { name: /mara.*yatzy korrigieren/i })).toHaveTextContent('100')
+    await user.click(screen.getByRole('button', { name: /mara.*yatzy korrigieren/i }))
+    await user.click(screen.getByRole('button', { name: /50 punkte hinzufügen/i }))
+    await user.click(screen.getByRole('button', { name: /korrektur speichern/i }))
+
+    expect(screen.getByText(/timo ist dran/i)).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /mara.*yatzy korrigieren/i })).toHaveTextContent('150')
+  })
 })
