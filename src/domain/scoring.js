@@ -51,7 +51,7 @@ export function scoreDistribution(category, counts, dice) {
     const triples = qualifyingFaces(counts, 3)
     for (const triple of triples) {
       const pair = qualifyingFaces(counts, 2).find(item => item.face !== triple.face)
-      if (pair) return triple.face * 3 + pair.face * 2
+      if (pair) return category.fixed ?? (triple.face * 3 + pair.face * 2)
     }
     return 0
   }
@@ -59,9 +59,9 @@ export function scoreDistribution(category, counts, dice) {
     const triples = qualifyingFaces(counts, 3).slice(0, 2)
     return triples.length === 2 ? triples.reduce((sum, triple) => sum + triple.face * 3, 0) : 0
   }
-  if (category.type === 'smallStraight') return counts.slice(0, 5).every(Boolean) ? 15 : 0
-  if (category.type === 'largeStraight') return counts.slice(1, 6).every(Boolean) ? 20 : 0
-  if (category.type === 'fullStraight') return counts.every(Boolean) ? 21 : 0
+  if (category.type === 'smallStraight') return counts.slice(0, 5).every(Boolean) ? category.fixed : 0
+  if (category.type === 'largeStraight') return counts.slice(1, 6).every(Boolean) ? category.fixed : 0
+  if (category.type === 'fullStraight') return counts.every(Boolean) ? category.fixed : 0
   if (category.type === 'yatzy') return counts.some(count => count === dice) ? category.fixed : 0
   if (category.type === 'chance') return counts.reduce((sum, count, index) => sum + count * (index + 1), 0)
   return 0
@@ -79,7 +79,10 @@ export function validScores(category, config) {
 }
 
 export function isValidScore(category, value, config) {
-  return Number.isInteger(value) && validScores(category, config).includes(value)
+  if (!Number.isSafeInteger(value) || value < 0) return false
+  if (category.input === 'manual') return true
+  if (category.input === 'repeat') return value % category.step === 0
+  return validScores(category, config).includes(value)
 }
 
 export function calculatePlayer(scores, config) {
@@ -88,7 +91,9 @@ export function calculatePlayer(scores, config) {
   const upperComplete = config.upper.every(category => scores[category.key] !== undefined)
   const complete = getCategories(config).every(category => scores[category.key] !== undefined)
   const bonus = upperComplete && upper >= config.upperTarget ? config.bonusValue : 0
-  return { upper, lower, bonus, total: upper + lower + bonus, complete }
+  const total = upper + lower + bonus
+  if (![upper, lower, bonus, total].every(Number.isSafeInteger)) throw new RangeError('Die Punktesumme ist zu gross.')
+  return { upper, lower, bonus, total, complete }
 }
 
 export function rankPlayers(players, config) {

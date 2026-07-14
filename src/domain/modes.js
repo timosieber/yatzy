@@ -5,34 +5,34 @@ const UPPER = [
   ['fours', 'Vierer', 4],
   ['fives', 'Fünfer', 5],
   ['sixes', 'Sechser', 6],
-].map(([key, label, face]) => ({ key, label, type: 'upper', face, section: 'upper' }))
+].map(([key, label, face]) => ({ key, label, type: 'upper', face, input: 'calculated', section: 'upper' }))
 
 const STANDARD_LOWER = [
-  { key: 'pair', label: '1 Paar', type: 'pair' },
-  { key: 'twoPairs', label: '2 Paare', type: 'twoPairs' },
-  { key: 'threeKind', label: '3 gleiche', type: 'kind3' },
-  { key: 'fourKind', label: '4 gleiche', type: 'kind4' },
-  { key: 'fullHouse', label: 'Full House', type: 'fullHouse' },
-  { key: 'smallStraight', label: 'Kleine Straße', type: 'smallStraight', fixed: 15 },
-  { key: 'largeStraight', label: 'Große Straße', type: 'largeStraight', fixed: 20 },
-  { key: 'yatzy', label: 'Yatzy', type: 'yatzy', fixed: 50 },
-  { key: 'chance', label: 'Chance', type: 'chance' },
+  { key: 'pair', label: '1 Paar', type: 'pair', input: 'manual' },
+  { key: 'twoPairs', label: '2 Paare', type: 'twoPairs', input: 'manual' },
+  { key: 'threeKind', label: '3 gleiche', type: 'kind3', input: 'manual' },
+  { key: 'fourKind', label: '4 gleiche', type: 'kind4', input: 'manual' },
+  { key: 'fullHouse', label: 'Full House', type: 'fullHouse', fixed: 25, input: 'fixed' },
+  { key: 'smallStraight', label: 'Kleine Straße', type: 'smallStraight', fixed: 30, input: 'fixed' },
+  { key: 'largeStraight', label: 'Große Straße', type: 'largeStraight', fixed: 40, input: 'fixed' },
+  { key: 'yatzy', label: 'Yatzy', type: 'yatzy', fixed: 50, step: 50, input: 'repeat' },
+  { key: 'chance', label: 'Chance', type: 'chance', input: 'calculated' },
 ]
 
 const MAXI_LOWER = [
-  { key: 'pair', label: '1 Paar', type: 'pair' },
-  { key: 'twoPairs', label: '2 Paare', type: 'twoPairs' },
-  { key: 'threePairs', label: '3 Paare', type: 'threePairs' },
-  { key: 'threeKind', label: '3 gleiche', type: 'kind3' },
-  { key: 'fourKind', label: '4 gleiche', type: 'kind4' },
-  { key: 'fiveKind', label: '5 gleiche', type: 'kind5' },
-  { key: 'tower', label: 'Turm (3 + 3)', type: 'tower' },
-  { key: 'fullHouse', label: 'Full House', type: 'fullHouse' },
-  { key: 'fullStraight', label: 'Volle Straße', type: 'fullStraight', fixed: 21 },
-  { key: 'smallStraight', label: 'Kleine Straße', type: 'smallStraight', fixed: 15 },
-  { key: 'largeStraight', label: 'Große Straße', type: 'largeStraight', fixed: 20 },
-  { key: 'yatzy', label: 'Yatzy', type: 'yatzy', fixed: 100 },
-  { key: 'chance', label: 'Chance', type: 'chance' },
+  { key: 'pair', label: '1 Paar', type: 'pair', input: 'manual' },
+  { key: 'twoPairs', label: '2 Paare', type: 'twoPairs', input: 'manual' },
+  { key: 'threePairs', label: '3 Paare', type: 'threePairs', input: 'calculated' },
+  { key: 'threeKind', label: '3 gleiche', type: 'kind3', input: 'manual' },
+  { key: 'fourKind', label: '4 gleiche', type: 'kind4', input: 'manual' },
+  { key: 'fiveKind', label: '5 gleiche', type: 'kind5', input: 'calculated' },
+  { key: 'tower', label: 'Turm (3 + 3)', type: 'tower', input: 'calculated' },
+  { key: 'fullHouse', label: 'Full House', type: 'fullHouse', fixed: 25, input: 'fixed' },
+  { key: 'fullStraight', label: 'Volle Straße', type: 'fullStraight', fixed: 21, input: 'fixed' },
+  { key: 'smallStraight', label: 'Kleine Straße', type: 'smallStraight', fixed: 30, input: 'fixed' },
+  { key: 'largeStraight', label: 'Große Straße', type: 'largeStraight', fixed: 40, input: 'fixed' },
+  { key: 'yatzy', label: 'Yatzy', type: 'yatzy', fixed: 50, step: 50, input: 'repeat' },
+  { key: 'chance', label: 'Chance', type: 'chance', input: 'calculated' },
 ]
 
 const MODE_TEMPLATES = {
@@ -77,6 +77,7 @@ export function getMode(key, overrides = {}) {
 
   return deepFreeze({
     ...template,
+    categoryVersion: 2,
     dice,
     upperTargetCount,
     upperTarget: key === 'free' ? upperTargetCount * 21 : template.upperTarget,

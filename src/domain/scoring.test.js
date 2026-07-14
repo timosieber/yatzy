@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { getMode } from './modes.js'
-import { calculatePlayer, rankPlayers, validScores } from './scoring.js'
+import { calculatePlayer, isValidScore, rankPlayers, validScores } from './scoring.js'
 
 describe('Yatzy scoring', () => {
   it('awards the standard upper bonus at 63 eyes', () => {
@@ -17,12 +17,36 @@ describe('Yatzy scoring', () => {
     expect(calculatePlayer(scores, config).bonus).toBe(100)
   })
 
-  it('exposes only possible pair scores', () => {
+  it('accepts arbitrary nonnegative integers in the four manual categories', () => {
     const config = getMode('standard')
-    const pair = config.lower.find(category => category.key === 'pair')
+    for (const key of ['pair', 'twoPairs', 'threeKind', 'fourKind']) {
+      const category = config.lower.find(item => item.key === key)
+      expect(category.input).toBe('manual')
+      expect(isValidScore(category, 137, config)).toBe(true)
+      expect(isValidScore(category, -1, config)).toBe(false)
+      expect(isValidScore(category, 1.5, config)).toBe(false)
+    }
+  })
 
-    expect(validScores(pair, config)).toContain(12)
-    expect(validScores(pair, config)).not.toContain(11)
+  it('uses the fixed house-rule values in every mode', () => {
+    for (const mode of ['standard', 'maxi', 'free']) {
+      const config = getMode(mode)
+      expect(validScores(config.lower.find(item => item.key === 'fullHouse'), config)).toEqual([0, 25])
+      expect(validScores(config.lower.find(item => item.key === 'smallStraight'), config)).toEqual([0, 30])
+      expect(validScores(config.lower.find(item => item.key === 'largeStraight'), config)).toEqual([0, 40])
+    }
+    const maxi = getMode('maxi')
+    expect(validScores(maxi.lower.find(item => item.key === 'fullStraight'), maxi)).toEqual([0, 21])
+  })
+
+  it('accepts cumulative Yatzys in 50-point steps in every mode', () => {
+    for (const mode of ['standard', 'blitz', 'maxi', 'free']) {
+      const config = getMode(mode)
+      const yatzy = config.lower.find(item => item.key === 'yatzy')
+      expect(yatzy).toMatchObject({ input: 'repeat', step: 50, fixed: 50 })
+      expect(isValidScore(yatzy, 250, config)).toBe(true)
+      expect(isValidScore(yatzy, 275, config)).toBe(false)
+    }
   })
 
   it('accepts only multiples of a face in upper categories', () => {

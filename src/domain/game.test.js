@@ -19,7 +19,7 @@ describe('game reducer', () => {
     const game = createGame(getMode('standard'), ['Mara', 'Timo'])
 
     expect(() => gameReducer(game, { type: 'score', playerIndex: 1, category: 'ones', value: 3 })).toThrow(/nicht am zug/i)
-    expect(() => gameReducer(game, { type: 'score', playerIndex: 0, category: 'pair', value: 11 })).toThrow(/ungültig/i)
+    expect(() => gameReducer(game, { type: 'score', playerIndex: 0, category: 'fullHouse', value: 24 })).toThrow(/ungültig/i)
   })
 
   it('correction keeps the active turn and can be undone', () => {
