@@ -87,7 +87,7 @@ export function toSubmission(game) {
       upperTarget: game.config.upperTarget,
       upperTargetCount: game.config.upperTargetCount,
       bonusValue: game.config.bonusValue,
-      categoryVersion: 1,
+      categoryVersion: game.config.categoryVersion,
     },
     completedAt: game.completedAt,
     players: game.players.map((player, seat) => {

@@ -1,13 +1,19 @@
+function safeNumber(value) {
+  const number = Number(value)
+  if (!Number.isSafeInteger(number)) throw new RangeError('Gespeicherte Punktzahl ist zu gross.')
+  return number
+}
+
 function mapPlayer(row) {
   return {
     seat: row.seat,
     name: row.player_name,
     playerKey: row.player_key,
     scores: row.scores,
-    upperTotal: row.upper_total,
-    bonus: row.bonus,
-    lowerTotal: row.lower_total,
-    total: row.total,
+    upperTotal: safeNumber(row.upper_total),
+    bonus: safeNumber(row.bonus),
+    lowerTotal: safeNumber(row.lower_total),
+    total: safeNumber(row.total),
     rank: row.rank,
   }
 }
@@ -92,6 +98,7 @@ export class PostgresGameRepository {
     )
     const players = new Map()
     for (const row of result.rows) {
+      const total = safeNumber(row.total)
       const current = players.get(row.player_key) ?? {
         playerKey: row.player_key,
         playerName: row.player_name,
@@ -102,10 +109,10 @@ export class PostgresGameRepository {
         lastPlayedAt: new Date(row.completed_at).toISOString(),
       }
       current.playerName = row.player_name
-      current.bestScore = Math.max(current.bestScore, row.total)
+      current.bestScore = Math.max(current.bestScore, total)
       current.gamesPlayed += 1
       current.wins += row.rank === 1 ? 1 : 0
-      current.totalScore += row.total
+      current.totalScore = safeNumber(current.totalScore + total)
       current.lastPlayedAt = new Date(row.completed_at).toISOString()
       players.set(row.player_key, current)
     }

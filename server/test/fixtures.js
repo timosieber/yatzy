@@ -15,7 +15,7 @@ export function completedGame({
       upperTarget: config.upperTarget,
       upperTargetCount: config.upperTargetCount,
       bonusValue: config.bonusValue,
-      categoryVersion: 1,
+      categoryVersion: config.categoryVersion,
     },
     completedAt: '2026-07-14T12:00:00.000Z',
     players: names.map((name, seat) => ({ seat, name, scores: { ...scores }, total: 999, rank: 9 })),

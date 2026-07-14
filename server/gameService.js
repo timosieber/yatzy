@@ -19,7 +19,7 @@ const rawGameSchema = z.object({
     upperTarget: z.number().int().min(0).max(168),
     upperTargetCount: z.number().int().min(2).max(8).optional(),
     bonusValue: z.number().int().min(0).max(100),
-    categoryVersion: z.literal(1),
+    categoryVersion: z.literal(2),
   }),
   completedAt: z.string().datetime(),
   players: z.array(z.object({
@@ -73,7 +73,13 @@ export function validateCompletedGame(input) {
     return { name: names[index].display, playerKey: names[index].key, scores: { ...player.scores } }
   })
 
-  const ranked = rankPlayers(players, config)
+  let ranked
+  try {
+    ranked = rankPlayers(players, config)
+  } catch (error) {
+    if (error instanceof RangeError) throw new GameValidationError('INVALID_SCORE', 'Die Punktesumme ist zu gross.')
+    throw error
+  }
   const canonicalPlayers = payload.players.map((player, index) => {
     const result = ranked.find(item => item.seat === index)
     return {
@@ -97,7 +103,7 @@ export function validateCompletedGame(input) {
       upperTarget: config.upperTarget,
       upperTargetCount: config.upperTargetCount,
       bonusValue: config.bonusValue,
-      categoryVersion: 1,
+      categoryVersion: 2,
     },
     completedAt: completedAt.toISOString(),
     players: canonicalPlayers,

@@ -45,7 +45,7 @@ describe('game API', () => {
 
   it('rejects impossible scores with a stable error envelope', async () => {
     const payload = completedGame()
-    payload.players[0].scores.pair = 11
+    payload.players[0].scores.fullHouse = 24
 
     const response = await request(app).post('/api/games').send(payload)
 

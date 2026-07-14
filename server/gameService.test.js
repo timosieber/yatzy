@@ -21,12 +21,24 @@ describe('completed game validation', () => {
 
   it('rejects incomplete and impossible scores', () => {
     const impossible = completedGame()
-    impossible.players[0].scores.pair = 11
+    impossible.players[0].scores.fullHouse = 24
     expect(() => validateCompletedGame(impossible)).toThrow(/ungültig/i)
 
     const incomplete = completedGame()
     delete incomplete.players[0].scores.chance
     expect(() => validateCompletedGame(incomplete)).toThrow(/vollständig/i)
+  })
+
+  it('accepts manual scores and cumulative Yatzys but rejects invalid fixed scores', () => {
+    const payload = completedGame()
+    payload.players[0].scores.pair = 137
+    payload.players[0].scores.yatzy = 150
+
+    const result = validateCompletedGame(payload)
+
+    expect(result.players[0].lowerTotal).toBe(287)
+    payload.players[0].scores.fullHouse = 24
+    expect(() => validateCompletedGame(payload)).toThrow(/ungültig/i)
   })
 })
 

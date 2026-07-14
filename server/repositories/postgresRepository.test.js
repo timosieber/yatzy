@@ -10,8 +10,10 @@ async function createRepository() {
   const database = newDb()
   const adapter = database.adapters.createPg()
   const pool = new adapter.Pool()
-  const sql = await readFile(new URL('../../db/migrations/001_initial.sql', import.meta.url), 'utf8')
-  await pool.query(sql)
+  for (const name of ['001_initial.sql', '002_widen_score_totals.sql']) {
+    const sql = await readFile(new URL(`../../db/migrations/${name}`, import.meta.url), 'utf8')
+    await pool.query(sql)
+  }
   return { pool, repository: new PostgresGameRepository(pool) }
 }
 
@@ -40,6 +42,22 @@ describe('PostgresGameRepository', () => {
 
     expect(rows[0]).toMatchObject({ playerName: 'timo', bestScore: 50, gamesPlayed: 2, wins: 2 })
     expect(await repository.health()).toBe(true)
+    await pool.end()
+  })
+
+  it('round-trips manual scores above the 32-bit integer range', async () => {
+    const { pool, repository } = await createRepository()
+    const payload = completedGame({ id: '10000000-0000-4000-8000-000000000023' })
+    payload.players[0].scores.pair = 3_000_000_000
+    const game = validateCompletedGame(payload)
+
+    await repository.saveGame(game)
+    const stored = await repository.getGame(game.id)
+    const leaderboard = await repository.getLeaderboard({ mode: 'standard', limit: 20 })
+
+    expect(stored.players[0].total).toBe(3_000_000_000)
+    expect(typeof stored.players[0].total).toBe('number')
+    expect(leaderboard[0].bestScore).toBe(3_000_000_000)
     await pool.end()
   })
 })
