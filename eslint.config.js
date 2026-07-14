@@ -1,4 +1,5 @@
 import js from '@eslint/js'
+import react from 'eslint-plugin-react'
 import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
 
@@ -13,14 +14,15 @@ export default [
       globals: {
         browser: 'readonly', document: 'readonly', window: 'readonly', navigator: 'readonly',
         localStorage: 'readonly', fetch: 'readonly', process: 'readonly', console: 'readonly',
-        setTimeout: 'readonly', clearTimeout: 'readonly', structuredClone: 'readonly', crypto: 'readonly',
+        setTimeout: 'readonly', clearTimeout: 'readonly', structuredClone: 'readonly', crypto: 'readonly', URL: 'readonly',
       },
       parserOptions: { ecmaFeatures: { jsx: true } },
     },
-    plugins: { 'react-hooks': reactHooks, 'react-refresh': reactRefresh },
+    plugins: { react, 'react-hooks': reactHooks, 'react-refresh': reactRefresh },
     rules: {
       ...reactHooks.configs.recommended.rules,
       ...reactRefresh.configs.vite.rules,
+      'react/jsx-uses-vars': 'error',
       'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
     },
   },
