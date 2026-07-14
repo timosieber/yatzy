@@ -115,7 +115,9 @@ button:focus-visible, input:focus-visible, select:focus-visible, [tabindex="-1"]
 .score-progress small { display: block; margin-bottom: 2px; color: var(--muted); font-size: 10px; }
 .score-progress strong { font: 600 14px 'DM Mono', monospace; }
 .score-table-wrap { overflow: auto; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); -webkit-overflow-scrolling: touch; }
-.score-table-wrap table { width: 100%; min-width: 540px; border-spacing: 0; border-collapse: separate; }
+.score-table-wrap table { width: 100%; min-width: calc(160px + var(--player-count) * 88px); table-layout: fixed; border-spacing: 0; border-collapse: separate; }
+.score-table-wrap .category-column { width: 160px; }
+.score-table-wrap .player-column { width: 88px; }
 .score-table-wrap th, .score-table-wrap td { height: 45px; padding: 0; text-align: center; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); font-size: 12px; }
 .score-table-wrap th:last-child, .score-table-wrap td:last-child { border-right: 0; }
 .score-table-wrap tbody tr:last-child th, .score-table-wrap tbody tr:last-child td { border-bottom: 0; }

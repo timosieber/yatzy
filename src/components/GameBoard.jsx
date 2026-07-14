@@ -70,7 +70,8 @@ export default function GameBoard({ game, theme, onTheme, onChange, onExit, onNe
     </section>
 
     <div className="score-table-wrap">
-      <table aria-label="Yatzy-Spielblock">
+      <table aria-label="Yatzy-Spielblock" style={{ '--player-count': game.players.length }}>
+        <colgroup><col className="category-column" />{game.players.map(player => <col className="player-column" key={player.id} />)}</colgroup>
         <thead><tr><th scope="col">Kategorie</th>{game.players.map((player, index) => <th scope="col" key={player.id} className={index === game.activePlayer ? 'active-column' : ''}><span>{player.name}</span><small>{calculatePlayer(player.scores, game.config).total}</small></th>)}</tr></thead>
         <tbody>
           <tr className="section-row"><th colSpan={game.players.length + 1}>Oben</th></tr>

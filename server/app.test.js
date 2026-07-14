@@ -20,6 +20,16 @@ describe('game API', () => {
     expect(response.body).toMatchObject({ status: 'ready', database: 'ready' })
   })
 
+  it('reports unavailable persistence without leaking internal details', async () => {
+    repository.health = async () => { throw new Error('connection string secret') }
+
+    const response = await request(app).get('/api/health')
+
+    expect(response.status).toBe(503)
+    expect(response.body).toEqual({ error: { code: 'DATABASE_UNAVAILABLE', message: expect.any(String) } })
+    expect(JSON.stringify(response.body)).not.toContain('connection string secret')
+  })
+
   it('recalculates and stores a complete game idempotently', async () => {
     const payload = completedGame()
     payload.players[0].scores.pair = 12
@@ -58,10 +68,13 @@ describe('game API', () => {
   it('returns structured errors for missing resources and malformed JSON data', async () => {
     const missing = await request(app).get('/api/games/20000000-0000-4000-8000-000000000001')
     const invalid = await request(app).post('/api/games').send({ mode: 'unknown' })
+    const invalidMode = await request(app).get('/api/leaderboard?mode=unknown')
 
     expect(missing.status).toBe(404)
     expect(missing.body.error.code).toBe('NOT_FOUND')
     expect(invalid.status).toBe(400)
     expect(invalid.body.error.code).toBe('INVALID_REQUEST')
+    expect(invalidMode.status).toBe(400)
+    expect(invalidMode.body.error.code).toBe('INVALID_REQUEST')
   })
 })
