@@ -15,6 +15,7 @@ export default [
         browser: 'readonly', document: 'readonly', window: 'readonly', navigator: 'readonly',
         localStorage: 'readonly', fetch: 'readonly', process: 'readonly', console: 'readonly',
         setTimeout: 'readonly', clearTimeout: 'readonly', structuredClone: 'readonly', crypto: 'readonly', URL: 'readonly',
+        URLSearchParams: 'readonly',
       },
       parserOptions: { ecmaFeatures: { jsx: true } },
     },
