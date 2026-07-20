@@ -116,4 +116,36 @@ describe('complete gameplay', () => {
     expect(screen.getByText(/timo ist dran/i)).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /mara.*yatzy korrigieren/i })).toHaveTextContent('150')
   })
+
+  it('supports the locker flow: free entry across players, clearing a cell, and finishing early', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+
+    await user.click(screen.getByRole('button', { name: /locker/i }))
+    await user.click(screen.getByRole('button', { name: /spiel starten/i }))
+
+    await user.click(screen.getByRole('button', { name: /mara.*einser eintragen/i }))
+    await user.click(screen.getByRole('button', { name: '3 Punkte' }))
+    await user.click(screen.getByRole('button', { name: /^eintragen$/i }))
+
+    expect(screen.getByText(/mara ist an der reihe/i)).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: /timo.*einser eintragen/i }))
+    await user.click(screen.getByRole('button', { name: '4 Punkte' }))
+    await user.click(screen.getByRole('button', { name: /^eintragen$/i }))
+
+    expect(screen.getByRole('button', { name: /mara.*einser korrigieren/i })).toHaveTextContent('3')
+    expect(screen.getByRole('button', { name: /timo.*einser korrigieren/i })).toHaveTextContent('4')
+    expect(screen.getByText(/mara ist an der reihe/i)).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: /mara.*einser korrigieren/i }))
+    await user.click(screen.getByRole('button', { name: 'Leeren' }))
+    expect(screen.getByRole('button', { name: /mara.*einser eintragen/i })).toHaveTextContent('+')
+
+    await user.click(screen.getByRole('button', { name: 'Spiel beenden' }))
+    await user.click(screen.getByRole('button', { name: /jetzt beenden/i }))
+
+    expect(screen.getByRole('heading', { name: /timo gewinnt!/i })).toBeInTheDocument()
+    expect(screen.getByText(/zählt aber nicht in der bestenliste/i)).toBeInTheDocument()
+  })
 })

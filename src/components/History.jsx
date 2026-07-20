@@ -29,7 +29,7 @@ export default function History() {
       const winners = game.players.filter(player => player.rank === 1)
       return <article className="history-row" key={game.id}>
         <div className="history-date"><CalendarDays size={17} /><time dateTime={game.completedAt}>{dateFormatter.format(new Date(game.completedAt))}</time></div>
-        <div><span className="mode-name">{getMode(game.mode, game.config).label}</span><h2>{winners.length > 1 ? `${winners.map(player => player.name).join(' & ')} teilen den Sieg` : `${winners[0].name} gewinnt`}</h2><p>{game.players.map(player => player.name).join(', ')}</p></div>
+        <div><span className="mode-name">{getMode(game.mode, game.config).label}</span>{game.locker && <span className="mode-name locker-badge">Locker</span>}<h2>{winners.length > 1 ? `${winners.map(player => player.name).join(' & ')} teilen den Sieg` : `${winners[0].name} gewinnt`}</h2><p>{game.players.map(player => player.name).join(', ')}</p></div>
         <div className="history-result"><strong>{Math.max(...game.players.map(player => player.total))}</strong><small>Bestes Ergebnis</small></div>
         <button type="button" className="detail-button" onClick={() => setSelected(game.id)}>Details <ChevronRight size={17} /></button>
       </article>

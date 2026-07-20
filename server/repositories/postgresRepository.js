@@ -25,6 +25,7 @@ function mapGame(row, players) {
     config: row.config,
     completedAt: new Date(row.completed_at).toISOString(),
     createdAt: new Date(row.created_at).toISOString(),
+    locker: row.locker ?? false,
     players,
   }
 }
@@ -40,11 +41,11 @@ export class PostgresGameRepository {
     try {
       await client.query('BEGIN')
       const inserted = await client.query(
-        `INSERT INTO games (id, mode, config, completed_at)
-         VALUES ($1, $2, $3::jsonb, $4)
+        `INSERT INTO games (id, mode, config, completed_at, locker)
+         VALUES ($1, $2, $3::jsonb, $4, $5)
          ON CONFLICT (id) DO NOTHING
          RETURNING id`,
-        [game.id, game.mode, JSON.stringify(game.config), game.completedAt],
+        [game.id, game.mode, JSON.stringify(game.config), game.completedAt, game.locker === true],
       )
       const existingPlayers = await client.query('SELECT 1 FROM game_players WHERE game_id = $1 LIMIT 1', [game.id])
       created = inserted.rowCount === 1 && existingPlayers.rowCount === 0
@@ -92,7 +93,7 @@ export class PostgresGameRepository {
       `SELECT p.*, g.completed_at
        FROM game_players p
        JOIN games g ON g.id = p.game_id
-       WHERE g.mode = $1
+       WHERE g.mode = $1 AND g.locker IS NOT TRUE
        ORDER BY g.completed_at ASC, p.seat ASC`,
       [mode],
     )

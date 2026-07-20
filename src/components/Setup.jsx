@@ -11,6 +11,7 @@ function normalized(value) {
 
 export default function Setup({ initialSetup, activeGame, theme, onTheme, onStart, onResume, onDiscard }) {
   const [mode, setMode] = useState(initialSetup?.mode ?? 'standard')
+  const [flow, setFlow] = useState(initialSetup?.flow ?? 'strict')
   const [names, setNames] = useState(initialSetup?.names?.length >= 2 ? initialSetup.names : ['Mara', 'Timo'])
   const [dice, setDice] = useState(initialSetup?.dice ?? 7)
   const [upperTargetCount, setUpperTargetCount] = useState(initialSetup?.upperTargetCount ?? 3)
@@ -24,7 +25,7 @@ export default function Setup({ initialSetup, activeGame, theme, onTheme, onStar
   const submit = event => {
     event.preventDefault()
     if (!valid) return
-    onStart({ mode, names: cleanNames, dice, upperTargetCount, bonusValue })
+    onStart({ mode, flow, names: cleanNames, dice, upperTargetCount, bonusValue })
   }
 
   return <main className="setup-page">
@@ -53,6 +54,31 @@ export default function Setup({ initialSetup, activeGame, theme, onTheme, onStar
             {modes.map(item => <button
               type="button"
               key={item.key}
+              className={`mode-option ${flow === 'strict' && mode === item.key ? 'selected' : ''}`}
+              aria-pressed={flow === 'strict' && mode === item.key}
+              onClick={() => { setFlow('strict'); setMode(item.key) }}
+            >
+              <span className="mode-radio" aria-hidden="true">{flow === 'strict' && mode === item.key && <Check size={14} />}</span>
+              <span><strong>{item.label}</strong><small>{item.subtitle}</small></span>
+            </button>)}
+            <button
+              type="button"
+              className={`mode-option ${flow === 'locker' ? 'selected' : ''}`}
+              aria-pressed={flow === 'locker'}
+              onClick={() => setFlow('locker')}
+            >
+              <span className="mode-radio" aria-hidden="true">{flow === 'locker' && <Check size={14} />}</span>
+              <span><strong>Locker</strong><small>Frei eintragen, ohne Zugzwang</small></span>
+            </button>
+          </div>
+        </fieldset>
+
+        {flow === 'locker' && <fieldset className="form-section rule-panel">
+          <legend>Regeln für den lockeren Ablauf</legend>
+          <div className="mode-list">
+            {modes.map(item => <button
+              type="button"
+              key={item.key}
               className={`mode-option ${mode === item.key ? 'selected' : ''}`}
               aria-pressed={mode === item.key}
               onClick={() => setMode(item.key)}
@@ -61,7 +87,7 @@ export default function Setup({ initialSetup, activeGame, theme, onTheme, onStar
               <span><strong>{item.label}</strong><small>{item.subtitle}</small></span>
             </button>)}
           </div>
-        </fieldset>
+        </fieldset>}
 
         {mode === 'free' && <fieldset className="form-section rule-panel">
           <legend>Freie Regeln</legend>

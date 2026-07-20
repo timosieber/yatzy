@@ -57,4 +57,32 @@ describe('leaderboard aggregation', () => {
 
     expect(rows[0]).toMatchObject({ playerName: 'timo', bestScore: 50, gamesPlayed: 2, wins: 2 })
   })
+
+  it('excludes locker games from the leaderboard', async () => {
+    const repository = new MemoryGameRepository()
+    const normal = validateCompletedGame(completedGame({ id: '10000000-0000-4000-8000-000000000021', names: ['Elia', 'Noah'] }))
+    const lockerPayload = completedGame({ id: '10000000-0000-4000-8000-000000000022', names: ['Ana', 'Bela'], locker: true })
+    lockerPayload.completedAt = '2026-07-14T13:00:00.000Z'
+    const locker = validateCompletedGame(lockerPayload)
+    await repository.saveGame(normal)
+    await repository.saveGame(locker)
+
+    const rows = await getLeaderboard(repository, { mode: 'standard', limit: 20 })
+
+    const playerKeys = rows.map(row => row.playerKey)
+    expect(playerKeys).toEqual(expect.arrayContaining(['elia', 'noah']))
+    expect(playerKeys).not.toEqual(expect.arrayContaining(['ana', 'bela']))
+  })
+})
+
+describe('locker flag', () => {
+  it('marks the canonical result as locker when the flag is set', () => {
+    const result = validateCompletedGame(completedGame({ locker: true }))
+    expect(result.locker).toBe(true)
+  })
+
+  it('defaults the canonical result to non-locker when the flag is absent', () => {
+    const result = validateCompletedGame(completedGame())
+    expect(result.locker).toBe(false)
+  })
 })

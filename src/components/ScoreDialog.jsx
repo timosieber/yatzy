@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { isValidScore, validScores } from '../domain/scoring.js'
 import Dialog from './Dialog.jsx'
 
-export default function ScoreDialog({ category, config, initialValue, correction, onSave, onClose }) {
+export default function ScoreDialog({ category, config, initialValue, correction, onSave, onClose, onClear }) {
   const [value, setValue] = useState(initialValue ?? (category.input === 'repeat' ? 0 : null))
   const [manualValue, setManualValue] = useState(initialValue === undefined ? '' : String(initialValue))
   const scores = category.input === 'manual' || category.input === 'repeat'
@@ -45,6 +45,7 @@ export default function ScoreDialog({ category, config, initialValue, correction
     <div className="dialog-actions">
       <button type="button" className="primary-button" disabled={!canSave} onClick={() => onSave(selectedValue)}>{correction ? 'Korrektur speichern' : 'Eintragen'}</button>
       <button type="button" className="danger-ghost" onClick={() => onSave(0)}>Streichen</button>
+      {onClear && initialValue !== undefined && <button type="button" className="danger-ghost" onClick={() => onClear()}>Leeren</button>}
     </div>
   </Dialog>
 }

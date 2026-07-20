@@ -29,7 +29,7 @@ export class MemoryGameRepository {
   async getLeaderboard({ mode, limit = 50 }) {
     const players = new Map()
     const games = [...this.games.values()]
-      .filter(game => game.mode === mode)
+      .filter(game => game.mode === mode && game.locker !== true)
       .sort((a, b) => a.completedAt.localeCompare(b.completedAt))
     for (const game of games) {
       for (const player of game.players) {

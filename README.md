@@ -1,6 +1,6 @@
 # Würfelblock
 
-Ein vollständiger, mobiler Yatzy-Spielblock für 2–8 Personen. Enthalten sind Standard, Blitz, Maxi Yatzy und freie Regeln, automatische Punktprüfung, Rückgängig/Korrektur, lokale Wiederaufnahme, Spielverlauf und Bestenlisten.
+Ein vollständiger, mobiler Yatzy-Spielblock für 2–8 Personen. Enthalten sind Standard, Blitz, Maxi Yatzy und freie Regeln, ein lockerer Ablauf ohne Zugzwang, automatische Punktprüfung, Rückgängig/Korrektur, lokale Wiederaufnahme, Spielverlauf und Bestenlisten.
 
 ## Lokal starten
 
@@ -37,6 +37,7 @@ Weitere Variablen sind nicht erforderlich. Optional kann `PGSSLMODE=require` ges
 - **Blitz:** oberer Teil, Yatzy und Chance.
 - **Maxi Yatzy:** 6 Würfel, zusätzliche Kategorien, 100 Bonuspunkte ab 84.
 - **Freie Regeln:** 5–8 Würfel sowie anpassbares Bonusziel und Bonuswert.
+- **Locker:** freier Ablauf ohne Zugzwang mit frei wählbarem Regelsatz (Standard, Blitz, Maxi oder freie Regeln). Jede Person kann jede Zelle jederzeit eintragen, korrigieren oder leeren; über „Weiter/Zurück" oder einen Klick auf den Namen wechselt die aktive Person, ohne dass etwas eingetragen sein muss. Das Spiel endet nur über „Spiel beenden" (leere Felder zählen 0). Locker-Spiele erscheinen im Verlauf, zählen aber nicht in der Bestenliste.
 
 Für alle Spielmodi gelten außerdem diese Hausregeln:
 

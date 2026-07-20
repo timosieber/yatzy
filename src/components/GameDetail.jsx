@@ -24,13 +24,16 @@ export default function GameDetail({ id, onClose }) {
 function ReadonlyScorecard({ game }) {
   const config = getMode(game.mode, game.config)
   const rows = [...config.upper, ...config.lower]
-  return <div className="detail-table-wrap"><table aria-label={`Spielblock vom ${dateFormatter.format(new Date(game.completedAt))}`}>
-    <thead><tr><th>Kategorie</th>{game.players.map(player => <th key={player.seat}>{player.name}</th>)}</tr></thead>
-    <tbody>
-      {rows.map(category => <tr key={category.key}><th>{category.label}</th>{game.players.map(player => <td key={player.seat}>{player.scores[category.key]}</td>)}</tr>)}
-      <tr className="summary-row"><th>Oben</th>{game.players.map(player => <td key={player.seat}>{player.upperTotal}</td>)}</tr>
-      <tr className="bonus-row"><th>Bonus</th>{game.players.map(player => <td key={player.seat}>{player.bonus}</td>)}</tr>
-      <tr className="total-row"><th>Gesamt</th>{game.players.map(player => <td key={player.seat}>{player.total}</td>)}</tr>
-    </tbody>
-  </table></div>
+  return <div className="detail-table-wrap">
+    {game.locker && <p className="detail-locker-note">Dieses Spiel wurde locker gespielt und zählt nicht in die Bestenliste.</p>}
+    <table aria-label={`Spielblock vom ${dateFormatter.format(new Date(game.completedAt))}`}>
+      <thead><tr><th>Kategorie</th>{game.players.map(player => <th key={player.seat}>{player.name}</th>)}</tr></thead>
+      <tbody>
+        {rows.map(category => <tr key={category.key}><th>{category.label}</th>{game.players.map(player => <td key={player.seat}>{player.scores[category.key] === undefined ? '–' : player.scores[category.key]}</td>)}</tr>)}
+        <tr className="summary-row"><th>Oben</th>{game.players.map(player => <td key={player.seat}>{player.upperTotal}</td>)}</tr>
+        <tr className="bonus-row"><th>Bonus</th>{game.players.map(player => <td key={player.seat}>{player.bonus}</td>)}</tr>
+        <tr className="total-row"><th>Gesamt</th>{game.players.map(player => <td key={player.seat}>{player.total}</td>)}</tr>
+      </tbody>
+    </table>
+  </div>
 }

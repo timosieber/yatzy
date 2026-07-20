@@ -10,7 +10,7 @@ async function createRepository() {
   const database = newDb()
   const adapter = database.adapters.createPg()
   const pool = new adapter.Pool()
-  for (const name of ['001_initial.sql', '002_widen_score_totals.sql']) {
+  for (const name of ['001_initial.sql', '002_widen_score_totals.sql', '003_add_locker_flag.sql']) {
     const sql = await readFile(new URL(`../../db/migrations/${name}`, import.meta.url), 'utf8')
     await pool.query(sql)
   }
@@ -42,6 +42,22 @@ describe('PostgresGameRepository', () => {
 
     expect(rows[0]).toMatchObject({ playerName: 'timo', bestScore: 50, gamesPlayed: 2, wins: 2 })
     expect(await repository.health()).toBe(true)
+    await pool.end()
+  })
+
+  it('stores locker games but excludes them from the leaderboard', async () => {
+    const { pool, repository } = await createRepository()
+    const lockerPayload = completedGame({ id: '10000000-0000-4000-8000-000000000024', locker: true })
+    const lockerGame = validateCompletedGame(lockerPayload)
+
+    await repository.saveGame(lockerGame)
+
+    expect((await repository.getGame(lockerGame.id)).locker).toBe(true)
+    const { games } = await repository.listGames({ limit: 10 })
+    expect(games.some(game => game.id === lockerGame.id)).toBe(true)
+
+    const leaderboard = await repository.getLeaderboard({ mode: 'standard', limit: 20 })
+    expect(leaderboard).toHaveLength(0)
     await pool.end()
   })
 

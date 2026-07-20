@@ -7,7 +7,7 @@ import { discoverMigrations } from './migrate.js'
 describe('database migrations', () => {
   it('discovers numbered SQL migrations in order', async () => {
     const files = await discoverMigrations()
-    expect(files.map(file => file.name)).toEqual(['001_initial.sql', '002_widen_score_totals.sql'])
+    expect(files.map(file => file.name)).toEqual(['001_initial.sql', '002_widen_score_totals.sql', '003_add_locker_flag.sql'])
   })
 
   it('defines games, players, uniqueness, and leaderboard indexes', async () => {

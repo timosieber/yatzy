@@ -29,6 +29,7 @@ const rawGameSchema = z.object({
     total: z.number().optional(),
     rank: z.number().optional(),
   })).min(2).max(8),
+  locker: z.boolean().optional(),
 })
 
 export function normalizeName(value) {
@@ -107,6 +108,7 @@ export function validateCompletedGame(input) {
     },
     completedAt: completedAt.toISOString(),
     players: canonicalPlayers,
+    locker: payload.locker === true,
   }
 }
 

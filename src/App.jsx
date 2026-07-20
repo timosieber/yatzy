@@ -50,7 +50,8 @@ export default function App() {
 
   const startGame = setup => {
     const config = getMode(setup.mode, setup.mode === 'free' ? setup : {})
-    const game = createGame(config, setup.names)
+    const locker = setup.flow === 'locker'
+    const game = createGame(config, setup.names, undefined, { locker })
     setStored(current => ({ ...current, setup, activeGame: game }))
     setView('game')
   }
